@@ -8,7 +8,7 @@ import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
 import betterquesting.core.BetterQuesting;
 import betterquesting.network.PacketTypeRegistry;
-import betterquesting.quests.tasks.TaskRegistry;
+import betterquesting.questing.tasks.TaskRegistry;
 import bq_rlc.core.proxies.CommonProxy;
 import bq_rlc.tasks.TaskRCLocate;
 import net.minecraftforge.fml.common.Mod;
