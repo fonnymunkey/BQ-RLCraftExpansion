@@ -1,0 +1,16 @@
+[
+{
+  "modid": "bq_rlc",
+  "name": "RLCraft Expansion",
+  "description": "BetterQuesting task compatibility mod for RLCraft",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Fonnymunkey"],
+  "credits": "Funwayguy for BetterQuesting and the expansion this is based from",
+  "logoFile": "title.jpg",
+  "screenshots": [],
+  "dependencies": ["betterquesting"]
+}
+]
