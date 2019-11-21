@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-@Mod(modid = BQRLC.MODID, version = BQRLC.VERSION, name = BQRLC.NAME, dependencies="required-after:(betterquesting))
+@Mod(modid = BQRLC.MODID, version = BQRLC.VERSION, name = BQRLC.NAME, dependencies="required-after:(betterquesting)")
 public class BQRLC
 {
     public static final String MODID = "bq_rlc";
