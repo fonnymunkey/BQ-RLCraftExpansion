@@ -4,6 +4,9 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.command.ICommandManager;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
 import betterquesting.core.BetterQuesting;
@@ -11,25 +14,24 @@ import betterquesting.network.PacketTypeRegistry;
 import betterquesting.questing.tasks.TaskRegistry;
 import bq_rlc.core.proxies.CommonProxy;
 import bq_rlc.tasks.TaskRCLocate;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = BQRLC.MODID, version = BQRLC.VERSION, name = BQRLC.NAME, guiFactory = "bq_rlc.handlers.ConfigGuiFactory")
+@Mod(modid = BQRLC.MODID, version = BQRLC.VERSION, name = BQRLC.NAME)
 public class BQRLC
 {
     public static final String MODID = "bq_rlc";
     public static final String VERSION = "BQ_RLC_VER";
     public static final String NAME = "RLCraftExpansion";
     public static final String PROXY = "bq_rlc.core.proxies";
-    public static final String CHANNEL = "BQ_RLC";
+    public static final String CHANNEL = "BQRLC";
 	
 	@Instance(MODID)
 	public static BQRLC instance;
@@ -52,13 +54,20 @@ public class BQRLC
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-    	proxy.registerThemes();
-    	
-    	TaskRegistry.RegisterTask(TaskRCLocate.class, new ResourceLocation(MODID + ":rc_locate"));
+        ModContainer modContainer = Loader.instance().getIndexedModList().get("bq_rlc");
+        if(modContainer != null && modContainer.getMod() instanceof BQRLC)
+        {
+            BQRLC modInstance = (BQRLC)modContainer.getMod();
+            // DO THINGS...
+        }
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
+        if(Loader.isModLoaded("betterquesting"))
+        {
+            proxy.registerExpansion();
+        }
     }
 }

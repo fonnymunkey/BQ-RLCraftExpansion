@@ -160,6 +160,12 @@ public class TaskRCLocate implements ITaskTickable
 			}
 		}
 	}
+	
+	@Override
+	public IGuiPanel getTaskGui(IGuiRect rect, DBEntry<IQuest> quest)
+	{
+	    return null;
+	}
  
 	@Override
 	public GuiScreen getTaskEditor(GuiScreen parent, DBEntry<IQuest> quest)
