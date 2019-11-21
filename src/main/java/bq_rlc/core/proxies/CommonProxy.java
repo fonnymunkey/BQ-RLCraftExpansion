@@ -5,7 +5,6 @@ import betterquesting.api.api.QuestingAPI;
 import betterquesting.api.questing.tasks.ITask;
 import betterquesting.api2.registry.IFactoryData;
 import betterquesting.api2.registry.IRegistry;
-import bq_rlc.core.BQRLC;
 import bq_rlc.tasks.factory.*;
 import net.minecraft.nbt.NBTTagCompound;
 

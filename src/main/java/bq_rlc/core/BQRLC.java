@@ -1,19 +1,7 @@
 package bq_rlc.core;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.command.ServerCommandManager;
-import net.minecraft.command.ICommandManager;
-import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
-import betterquesting.core.BetterQuesting;
-import betterquesting.network.PacketTypeRegistry;
-import betterquesting.questing.tasks.TaskRegistry;
 import bq_rlc.core.proxies.CommonProxy;
-import bq_rlc.tasks.TaskRCLocate;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -24,7 +12,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-@Mod(modid = BQRLC.MODID, version = BQRLC.VERSION, name = BQRLC.NAME, dependencies="required-after:(betterquesting)")
+@Mod(modid = BQRLC.MODID, version = BQRLC.VERSION, name = BQRLC.NAME)
 public class BQRLC
 {
     public static final String MODID = "bq_rlc";

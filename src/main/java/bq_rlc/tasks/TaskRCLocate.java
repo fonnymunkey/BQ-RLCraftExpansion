@@ -5,19 +5,22 @@ import betterquesting.api2.client.gui.misc.IGuiRect;
 import betterquesting.api2.client.gui.panels.IGuiPanel;
 import betterquesting.api2.storage.DBEntry;
 import betterquesting.api2.utils.ParticipantInfo;
-import bq_rlc.core.BQRLC;
 import bq_rlc.tasks.factory.FactoryTaskRCLocate;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import ivorius.reccomplex.world.gen.feature.WorldStructureGenerationData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 import java.util.*;
 
 public class TaskRCLocate implements ITaskTickable
@@ -78,17 +81,37 @@ public class TaskRCLocate implements ITaskTickable
 		internalDetect(pInfo, quest);
 	}
 	
+//    public static ITextComponent list(List<ITextComponent> names)
+//    {
+//        if (names.size() == 0)
+//           return RecurrentComplex.translations.format("commands.whatisthis.none");
+//
+//        return RecurrentComplex.translations.format(names.size() > 1 ? "commands.whatisthis.many" : "commands.whatisthis.one");//needs join(names) at end to list properly
+//    }
+	
 	private void internalDetect(@Nonnull ParticipantInfo pInfo, DBEntry<IQuest> quest)
     {
 		if(!pInfo.PLAYER.isEntityAlive() || !(pInfo.PLAYER instanceof EntityPlayerMP)) return;
 		
 		EntityPlayerMP playerMP = (EntityPlayerMP)pInfo.PLAYER;
 		
+		World world = playerMP.getEntityWorld();
+		BlockPos pos = playerMP.getPosition();
+		ChunkPos chunkpos = new ChunkPos(pos);
+		
 		boolean flag = false;
+		
+        List<WorldStructureGenerationData.StructureEntry> structureData = WorldStructureGenerationData.get(world).structureEntriesIn(chunkpos).collect(Collectors.toList());
+		List<String> structureIDs = new ArrayList<String>();
+		
+		for(WorldStructureGenerationData.StructureEntry structureTemp : structureData)
+			{
+				structureIDs.add(structureTemp.getStructureID());
+			}
 		
 		if(playerMP.dimension == dim)
 		{
-		    if(!StringUtils.isNullOrEmpty(structure) && !playerMP.getServerWorld().getChunkProvider().isInsideStructure(playerMP.world, structure, playerMP.getPosition()))
+		    if(!StringUtils.isNullOrEmpty(structure) && (structureIDs.contains(structure)))
             {
                 if(!invert) return;
             } 
