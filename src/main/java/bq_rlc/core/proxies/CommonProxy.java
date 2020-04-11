@@ -6,7 +6,10 @@ import betterquesting.api.questing.tasks.ITask;
 import betterquesting.api2.registry.IFactoryData;
 import betterquesting.api2.registry.IRegistry;
 import bq_rlc.tasks.factory.*;
+import bq_rlc.handlers.EventHandler;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class CommonProxy
 {
@@ -17,6 +20,7 @@ public class CommonProxy
 	
 	public void registerHandlers()
 	{
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 	
 	public void registerRenderers()
