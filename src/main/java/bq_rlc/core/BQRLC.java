@@ -16,8 +16,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 public class BQRLC
 {
     public static final String MODID = "bq_rlc";
-    public static final String VERSION = "BQ_RLC_VER";
-    public static final String NAME = "RLCraftExpansion";
+    public static final String VERSION = "1.0";
+    public static final String NAME = "BQ_RLCraftExpansion";
     public static final String PROXY = "bq_rlc.core.proxies";
     public static final String CHANNEL = "BQRLC";
 	
