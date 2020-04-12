@@ -16,12 +16,15 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import ivorius.reccomplex.world.gen.feature.WorldStructureGenerationData;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.stream.Collectors;
 import java.util.*;
+import java.io.*;
+import java.lang.Math;
 
 public class TaskRCLocate implements ITaskTickable
 {
@@ -81,13 +84,50 @@ public class TaskRCLocate implements ITaskTickable
 		internalDetect(pInfo, quest);
 	}
 	
-//    public static ITextComponent list(List<ITextComponent> names)
-//    {
-//        if (names.size() == 0)
-//           return RecurrentComplex.translations.format("commands.whatisthis.none");
-//
-//        return RecurrentComplex.translations.format(names.size() > 1 ? "commands.whatisthis.many" : "commands.whatisthis.one");//needs join(names) at end to list properly
-//    }
+	public boolean DataReadCompare(String regionName, String structure, int dim, int xPos, int zPos) {
+		File fileName = new File(DimensionManager.getCurrentSaveRootDirectory() + File.separator + "data" + File.separator + "QuestStructure" + File.separator + dim + File.separator + regionName + ".txt");
+		
+		try {
+			FileReader fileReader = new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			
+			while((line = bufferedReader.readLine()) != null) {
+				if(line.contains(structure)) {
+					String[] tokens = line.split(",");
+					int minX = Integer.parseInt(tokens[1]);
+					int maxX = Integer.parseInt(tokens[2]);
+					int minZ = Integer.parseInt(tokens[3]);
+					int maxZ = Integer.parseInt(tokens[4]);
+					
+					
+					if((minX < xPos) && (xPos < maxX) && (minZ < zPos) && (zPos < maxZ)) {
+						bufferedReader.close();
+						//System.out.println("player is in structure");
+						return true; }
+				}
+			}
+			bufferedReader.close();
+			//System.out.println("player not in structure");
+			return false;
+		}
+		catch(IOException ex) {
+			if(ex instanceof FileNotFoundException) {
+				System.out.println("BQ_RLC tried to access non-existant file");
+				return false; }
+			else {
+				System.out.println(ex);
+				return false; }
+		}
+	}
+	
+	public String convertPosToRegion(int xPos, int zPos)
+	{	
+		int regionX = Math.round(xPos/512);
+		int regionZ = Math.round(zPos/512);
+		String regionName = ("r." + Integer.toString(regionX) + "." + Integer.toString(regionZ));
+		return regionName;
+	}
 	
 	private void internalDetect(@Nonnull ParticipantInfo pInfo, DBEntry<IQuest> quest)
     {
@@ -95,39 +135,24 @@ public class TaskRCLocate implements ITaskTickable
 		
 		EntityPlayerMP playerMP = (EntityPlayerMP)pInfo.PLAYER;
 		
-		World world = playerMP.getEntityWorld();
 		BlockPos pos = playerMP.getPosition();
-		ChunkPos chunkpos = new ChunkPos(pos);
-		
-		boolean flag = false;
-		
-        List<WorldStructureGenerationData.StructureEntry> structureData = WorldStructureGenerationData.get(world).structureEntriesIn(chunkpos).collect(Collectors.toList());
-		List<String> structureIDs = new ArrayList<String>();
-		
-		for(WorldStructureGenerationData.StructureEntry structureTemp : structureData)
-			{
-				structureIDs.add(structureTemp.getStructureID());
-			}
+		int xPos = pos.getX();
+		int zPos = pos.getZ();
+		String regionName = convertPosToRegion(xPos, zPos);
 		
 		if(playerMP.dimension == dim)
 		{
-		    if(!StringUtils.isNullOrEmpty(structure) && (structureIDs.contains(structure)))
+		    if(!StringUtils.isNullOrEmpty(structure) && DataReadCompare(regionName, structure, dim, xPos, zPos))
             {
-                if(!invert) return;
+					//System.out.println("Completing");
+		            pInfo.ALL_UUIDS.forEach((uuid) -> {
+		                if(!isComplete(uuid)) setComplete(uuid);
+		            });
+		            pInfo.markDirtyParty(Collections.singletonList(quest.getID()));
             } 
-		    else
-			{
-				flag = true;
-			}
 		}
 		
-		if(flag != invert)
-        {
-            pInfo.ALL_UUIDS.forEach((uuid) -> {
-                if(!isComplete(uuid)) setComplete(uuid);
-            });
-            pInfo.markDirtyParty(Collections.singletonList(quest.getID()));
-        }
+
     }
 	
 	@Override
