@@ -72,7 +72,11 @@ public class TaskRCLocate implements ITaskTickable
 	@Override
 	public void tickTask(@Nonnull ParticipantInfo pInfo, DBEntry<IQuest> quest)
 	{
-		if(pInfo.PLAYER.ticksExisted%100 == 0) internalDetect(pInfo, quest);
+		System.out.println("Ticked");
+		if(pInfo.PLAYER.ticksExisted%100 == 0) {
+			System.out.println("Checking");
+			internalDetect(pInfo, quest);
+		}
 	}
 	
 	@Override
