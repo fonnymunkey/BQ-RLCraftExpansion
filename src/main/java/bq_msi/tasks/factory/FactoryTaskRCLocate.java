@@ -1,9 +1,9 @@
-package bq_rlc.tasks.factory;
+package bq_msi.tasks.factory;
 
 import betterquesting.api.questing.tasks.ITask;
 import betterquesting.api2.registry.IFactoryData;
-import bq_rlc.core.BQRLC;
-import bq_rlc.tasks.TaskRCLocate;
+import bq_msi.core.BQMSI;
+import bq_msi.tasks.TaskRCLocate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
@@ -14,7 +14,7 @@ public class FactoryTaskRCLocate implements IFactoryData<ITask, NBTTagCompound>
 	@Override
 	public ResourceLocation getRegistryName()
 	{
-		return new ResourceLocation(BQRLC.MODID + ":location");
+		return new ResourceLocation(BQMSI.MODID + ":location");
 	}
 
 	@Override

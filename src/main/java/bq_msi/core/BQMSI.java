@@ -1,7 +1,8 @@
-package bq_rlc.core;
+package bq_msi.core;
 
 import org.apache.logging.log4j.Logger;
-import bq_rlc.core.proxies.CommonProxy;
+
+import bq_msi.core.proxies.CommonProxy;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -12,17 +13,17 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-@Mod(modid = BQRLC.MODID, version = BQRLC.VERSION, name = BQRLC.NAME, dependencies = "after:betterquesting;after:reccomplex")
-public class BQRLC
+@Mod(modid = BQMSI.MODID, version = BQMSI.VERSION, name = BQMSI.NAME, dependencies = "after:betterquesting;after:reccomplex")
+public class BQMSI
 {
-    public static final String MODID = "bq_rlc";
-    public static final String VERSION = "1.0.1";
-    public static final String NAME = "BQ_RLCraftExpansion";
-    public static final String PROXY = "bq_rlc.core.proxies";
-    public static final String CHANNEL = "BQRLC";
+    public static final String MODID = "bq_msi";
+    public static final String VERSION = "1.0.2";
+    public static final String NAME = "BQ_Multiblock_Structure_Integration";
+    public static final String PROXY = "bq_msi.core.proxies";
+    public static final String CHANNEL = "BQMSI";
 	
 	@Instance(MODID)
-	public static BQRLC instance;
+	public static BQMSI instance;
 	
 	@SidedProxy(clientSide = PROXY + ".ClientProxy", serverSide = PROXY + ".CommonProxy")
 	public static CommonProxy proxy;
@@ -42,10 +43,10 @@ public class BQRLC
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        ModContainer modContainer = Loader.instance().getIndexedModList().get("bq_rlc");
-        if(modContainer != null && modContainer.getMod() instanceof BQRLC)
+        ModContainer modContainer = Loader.instance().getIndexedModList().get("bq_msi");
+        if(modContainer != null && modContainer.getMod() instanceof BQMSI)
         {
-            BQRLC modInstance = (BQRLC)modContainer.getMod();
+            BQMSI modInstance = (BQMSI)modContainer.getMod();
             // DO THINGS...
         }
     }

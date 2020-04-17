@@ -1,4 +1,4 @@
-package bq_rlc.handlers;
+package bq_msi.handlers;
 
 import ivorius.reccomplex.events.StructureGenerationEventLite;
 import net.minecraftforge.common.DimensionManager;

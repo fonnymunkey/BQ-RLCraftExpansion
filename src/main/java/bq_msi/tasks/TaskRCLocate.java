@@ -1,12 +1,12 @@
-package bq_rlc.tasks;
+package bq_msi.tasks;
 
 import betterquesting.api.questing.IQuest;
 import betterquesting.api2.client.gui.misc.IGuiRect;
 import betterquesting.api2.client.gui.panels.IGuiPanel;
 import betterquesting.api2.storage.DBEntry;
 import betterquesting.api2.utils.ParticipantInfo;
-import bq_rlc.tasks.factory.FactoryTaskRCLocate;
-import bq_rlc.core.*;
+import bq_msi.core.*;
+import bq_msi.tasks.factory.FactoryTaskRCLocate;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +16,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,12 +28,9 @@ import java.lang.Math;
 public class TaskRCLocate implements ITaskTickable
 {
 	private final Set<UUID> completeUsers = new TreeSet<>();
-	//public String name = "New Structure";
+	
 	public String structure = "";
 	public int dim = 0;
-	//public boolean visible = false;
-	//public boolean hideInfo = false;
-	//public boolean invert = false;
 	
 	@Override
 	public ResourceLocation getFactoryID()
@@ -42,7 +41,7 @@ public class TaskRCLocate implements ITaskTickable
 	@Override
 	public String getUnlocalisedName()
 	{
-		return BQRLC.MODID + ".task.rc_locate";
+		return BQMSI.MODID + ".task.rc_locate";
 	}
 	
 	@Override
@@ -72,9 +71,7 @@ public class TaskRCLocate implements ITaskTickable
 	@Override
 	public void tickTask(@Nonnull ParticipantInfo pInfo, DBEntry<IQuest> quest)
 	{
-		System.out.println("Ticked");
 		if(pInfo.PLAYER.ticksExisted%100 == 0) {
-			System.out.println("Checking");
 			internalDetect(pInfo, quest);
 		}
 	}
@@ -104,17 +101,15 @@ public class TaskRCLocate implements ITaskTickable
 					
 					if((minX < xPos) && (xPos < maxX) && (minZ < zPos) && (zPos < maxZ)) {
 						bufferedReader.close();
-						//System.out.println("player is in structure");
 						return true; }
 				}
 			}
 			bufferedReader.close();
-			//System.out.println("player not in structure");
 			return false;
 		}
 		catch(IOException ex) {
 			if(ex instanceof FileNotFoundException) {
-				System.out.println("BQ_RLC tried to access non-existant file");
+				System.out.println("BQ_RLC tried to access non-existant file" + ex);
 				return false; }
 			else {
 				System.out.println(ex);
@@ -145,7 +140,6 @@ public class TaskRCLocate implements ITaskTickable
 		{
 		    if(!StringUtils.isNullOrEmpty(structure) && DataReadCompare(regionName, structure, dim, xPos, zPos))
             {
-					//System.out.println("Completing");
 		            pInfo.ALL_UUIDS.forEach((uuid) -> {
 		                if(!isComplete(uuid)) setComplete(uuid);
 		            });
@@ -159,25 +153,16 @@ public class TaskRCLocate implements ITaskTickable
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
 	{
-		//nbt.setString("name", name);
 		nbt.setInteger("dimension", dim);
 		nbt.setString("structure", structure);
-		//nbt.setBoolean("visible", visible);
-		//nbt.setBoolean("hideInfo", hideInfo);
-		//nbt.setBoolean("invert", invert);
-		
 		return nbt;
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
 	{
-		//name = nbt.getString("name");
 		dim = nbt.getInteger("dimension");
 		structure = nbt.getString("structure");
-		//visible = nbt.getBoolean("visible");
-		//hideInfo = nbt.getBoolean("hideInfo");
-		//invert = nbt.getBoolean("invert") || nbt.getBoolean("invertDistance");
 	}
 	
 	@Override
@@ -211,12 +196,14 @@ public class TaskRCLocate implements ITaskTickable
 	}
 	
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IGuiPanel getTaskGui(IGuiRect rect, DBEntry<IQuest> quest)
 	{
 	    return null;
 	}
  
 	@Override
+	@SideOnly(Side.CLIENT)
 	public GuiScreen getTaskEditor(GuiScreen parent, DBEntry<IQuest> quest)
 	{
 		return null;

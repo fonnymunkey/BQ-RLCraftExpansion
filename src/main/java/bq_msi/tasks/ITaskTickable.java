@@ -1,4 +1,4 @@
-package bq_rlc.tasks;
+package bq_msi.tasks;
 
 import betterquesting.api.questing.IQuest;
 import betterquesting.api.questing.tasks.ITask;

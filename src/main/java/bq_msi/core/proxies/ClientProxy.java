@@ -1,4 +1,4 @@
-package bq_rlc.core.proxies;
+package bq_msi.core.proxies;
 
 public class ClientProxy extends CommonProxy
 {
