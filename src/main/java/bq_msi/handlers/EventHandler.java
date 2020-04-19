@@ -35,7 +35,7 @@ public class EventHandler
 		{
 		    for(DBEntry<ITask> task : entry.getValue().getTasks().getEntries())
             {
-                if(task.getValue() instanceof TaskMultiblock) ((TaskMultiblock)task.getValue()).onInteract(pInfo, entry, event.getItemStack(), state, event.getPos());
+                if(task.getValue() instanceof TaskMultiblock) ((TaskMultiblock)task.getValue()).onInteract(pInfo, entry, event.getHand(), event.getItemStack(), state, event.getPos());
             }
 		}
     }

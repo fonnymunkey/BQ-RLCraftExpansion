@@ -46,6 +46,8 @@ public class TaskMultiblock implements ITask
 {
 	private final Set<UUID> completeUsers = new TreeSet<>(); 
 	private final HashMap<UUID, Integer> userProgress = new HashMap<>();
+	
+	public static HashMap<String, MultiblockInventory> multiblockHash = new HashMap<>();
 
 	public BigItemStack targetItem = new BigItemStack(Items.AIR);
 	public final NbtBlockType targetBlock = new NbtBlockType(Blocks.AIR);
@@ -54,6 +56,7 @@ public class TaskMultiblock implements ITask
 	public int length = 0;
 	public int width = 0;
 	public int height = 0;
+	public boolean wildcardOptimization = false;
 	
     @Override
     public ResourceLocation getFactoryID()
@@ -105,6 +108,7 @@ public class TaskMultiblock implements ITask
 		pInfo.markDirtyParty(Collections.singletonList(quest.getID()));
     }
     
+    @Nullable
     public MultiblockInventory fileData(String fileName, int length, int width, int height)
     {
 		File file = new File(Loader.instance().getConfigDir() + File.separator + "betterquesting" + File.separator + "resources" + File.separator + fileName);
@@ -132,6 +136,7 @@ public class TaskMultiblock implements ITask
 						//System.out.println(blocks[i]);
 						if(blocks[i].trim().contentEquals(keyBlock)) {
 							//System.out.println("Key found, " + lengthCount + "," + i + "," + heightCount);
+							fileArray[lengthCount][i][heightCount] = "wildcard";
 							keyCoords[0] = lengthCount;
 							keyCoords[1] = i;
 							keyCoords[2] = heightCount;
@@ -154,79 +159,157 @@ public class TaskMultiblock implements ITask
 		}
     }
 	
-	public boolean matchData(World world, IBlockState state, BlockPos pos, int length, int width, int height, MultiblockInventory inventory){
+	public boolean matchData(World world, IBlockState state, BlockPos pos, int length, int width, int height, boolean wildcardOptimization, MultiblockInventory inventory){
 		String[][][] fileArray = inventory.getFileArray();
 		int[] keyCoords = inventory.getKeyCoords();
 		int keyLength = keyCoords[0];
 		int keyWidth = keyCoords[1];
 		int keyHeight = keyCoords[2];
+		boolean rot0 = true;
+		boolean rot1 = true;
+		boolean rot2 = true;
+		boolean rot3 = true;
 		
-		//System.out.println(keyLength + "," + keyWidth + "," + keyHeight);
-		
-		String[][][] blockArray = new String[length][width][height];
-		
-		for(int rot=0; rot<5; rot++) {
-			if(Arrays.deepEquals(blockArray, fileArray)) {
-				//System.out.println("Returning true");
-				return true;
-			}
-			else if(rot==4) return false;
-			else {
-				for(int h=0; h<height; h++) {
-					for(int w=0; w<width; w++) {
-						for(int l=0; l<length; l++) {
-							if(rot==0) {
-								int x = (-keyLength + l + pos.getX());
-								int y = (-keyHeight + h + pos.getY());
-								int z = (keyWidth + (-w) + pos.getZ());
-								blockArray[l][w][h] = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
-								//System.out.println(rot + "," + l + "," + w + "," + h + "," + blockArray[l][w][h] + "," + x + "," + y + "," + z);
-							}
-							if(rot==1) {
-								int x = (keyLength + (-l) + pos.getX());
-								int y = (-keyHeight + h + pos.getY());
-								int z = (-keyWidth + w + pos.getZ());
-								blockArray[l][w][h] = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
-								//System.out.println(rot + "," + l + "," + w + "," + h + "," + blockArray[l][w][h] + "," + x + "," + y + "," + z);
-							}
-							if(rot==2) {
-								int x = (-keyWidth + w + pos.getX());
-								int y = (-keyHeight + h + pos.getY());								
-								int z = (-keyLength + l + pos.getZ());
-								blockArray[l][w][h] = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
-								//System.out.println(rot + "," + l + "," + w + "," + h + "," + blockArray[l][w][h] + "," + x + "," + y + "," + z);
-							}
-							if(rot==3) {
-								int x = (keyWidth + (-w) + pos.getX());
-								int y = (-keyHeight + h + pos.getY());							
-								int z = (keyLength + (-l) + pos.getZ());
-								blockArray[l][w][h] = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
-								//System.out.println(rot + "," + l + "," + w + "," + h + "," + blockArray[l][w][h] + "," + x + "," + y + "," + z);
+		if(wildcardOptimization) {
+			for(int h=0; h<height; h++) {
+				for(int w=0; w<width; w++) {
+					for(int l=0; l<length; l++) {
+						if(fileArray[l][w][h].contentEquals("wildcard")) {}
+						else {
+							for(int rot=0; rot<4; rot++) {
+								if(rot==0 && rot0) {
+									int x = (-keyLength + l + pos.getX());
+									int y = (-keyHeight + h + pos.getY());
+									int z = (keyWidth + (-w) + pos.getZ());
+									//System.out.println("fileArray: " + fileArray[l][w][h]);
+									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									String fileBlock = fileArray[l][w][h];
+									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot0=false;
+								}
+								if(rot==1 && rot1) {
+									int x = (keyLength + (-l) + pos.getX());
+									int y = (-keyHeight + h + pos.getY());
+									int z = (-keyWidth + w + pos.getZ());
+									//System.out.println("fileArray: " + fileArray[l][w][h]);
+									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									String fileBlock = fileArray[l][w][h];
+									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot1=false;
+								}
+								if(rot==2 && rot2) {
+									int x = (-keyWidth + w + pos.getX());
+									int y = (-keyHeight + h + pos.getY());								
+									int z = (-keyLength + l + pos.getZ());
+									//System.out.println("fileArray: " + fileArray[l][w][h]);
+									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									String fileBlock = fileArray[l][w][h];
+									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot2=false;
+								}
+								if(rot==3 && rot3) {
+									int x = (keyWidth + (-w) + pos.getX());
+									int y = (-keyHeight + h + pos.getY());							
+									int z = (keyLength + (-l) + pos.getZ());
+									//System.out.println("fileArray: " + fileArray[l][w][h]);
+									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									String fileBlock = fileArray[l][w][h];
+									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot3=false;
+								}
+								if(!(rot0) && !(rot1) && !(rot2) && !(rot3)) return false;
 							}
 						}
 					}
-					//if(h==(height-1)) System.out.println("end height loop");
-				}
-				blockArray[keyLength][keyWidth][keyHeight] = "keyBlock".trim();
-				//System.out.println("Set " + keyLength + "," + keyWidth + "," + keyHeight + " to keyBlock");
-			}
+				} //System.out.println("Finish width");
+			} //System.out.println("Finish height");
+			System.out.println("Returning true wilcard optimized");
+			return true;
 		}
-		//System.out.println("Returning false");
-		return false;
-
+		else {
+			for(int h=0; h<height; h++) {
+				for(int w=0; w<width; w++) {
+					for(int l=0; l<length; l++) {
+						for(int rot=0; rot<4; rot++) {
+							if(rot==0 && rot0) {
+								int x = (-keyLength + l + pos.getX());
+								int y = (-keyHeight + h + pos.getY());
+								int z = (keyWidth + (-w) + pos.getZ());
+								//System.out.println("fileArray: " + fileArray[l][w][h]);
+								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								String fileBlock = fileArray[l][w][h];
+								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot0=false;
+							}
+							if(rot==1 && rot1) {
+								int x = (keyLength + (-l) + pos.getX());
+								int y = (-keyHeight + h + pos.getY());
+								int z = (-keyWidth + w + pos.getZ());
+								//System.out.println("fileArray: " + fileArray[l][w][h]);
+								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								String fileBlock = fileArray[l][w][h];
+								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot1=false;
+							}
+							if(rot==2 && rot2) {
+								int x = (-keyWidth + w + pos.getX());
+								int y = (-keyHeight + h + pos.getY());								
+								int z = (-keyLength + l + pos.getZ());
+								//System.out.println("fileArray: " + fileArray[l][w][h]);
+								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								String fileBlock = fileArray[l][w][h];
+								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot2=false;
+							}
+							if(rot==3 && rot3) {
+								int x = (keyWidth + (-w) + pos.getX());
+								int y = (-keyHeight + h + pos.getY());							
+								int z = (keyLength + (-l) + pos.getZ());
+								//System.out.println("fileArray: " + fileArray[l][w][h]);
+								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
+								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								String fileBlock = fileArray[l][w][h];
+								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot3=false;
+							}
+							if(!(rot0) && !(rot1) && !(rot2) && !(rot3)) return false;
+						}
+					}
+				} //System.out.println("Finish width");
+			} //System.out.println("Finish height");
+			System.out.println("Returning true wildcard un-optimized");
+			return true;
+		}		
 	}
     
-    public void onInteract(ParticipantInfo pInfo, DBEntry<IQuest> quest, ItemStack item, IBlockState state, BlockPos pos)
+    public void onInteract(ParticipantInfo pInfo, DBEntry<IQuest> quest, EnumHand hand, ItemStack item, IBlockState state, BlockPos pos)
     {
     	if(!pInfo.PLAYER.isEntityAlive() || !(pInfo.PLAYER instanceof EntityPlayerMP)) return;
     	World world = pInfo.PLAYER.world;
     	
-        if((targetBlock.b != Blocks.AIR) && (targetBlock.b == state.getBlock()) /*&& (targetItem.getBaseStack().getItem() != Items.AIR)*/ && (ItemComparison.StackMatch(targetItem.getBaseStack(), item, false, false)))
+        if((targetBlock.b != Blocks.AIR) && (targetBlock.b == state.getBlock()) && (ItemComparison.StackMatch(targetItem.getBaseStack(), item, false, false)))
         {
             if(state.getBlock() == Blocks.AIR) return;
+            if(!(hand == EnumHand.MAIN_HAND)) return;
             
-            if(matchData(world, state, pos, length, width, height, fileData(fileName, length, width, height))) {
-	            final List<Tuple<UUID, Integer>> progress = getBulkProgress(pInfo.ALL_UUIDS);
+            long timerStart = System.currentTimeMillis();
+            
+            if(multiblockHash.get(fileName) == null) {
+            	MultiblockInventory invenToCache = fileData(fileName, length, width, height);
+            	if(invenToCache == null) {
+            		System.out.println("Multiblock task attempted to cache broken file " + fileName);
+            		return;
+            	}
+            	System.out.println("Multiblock " + fileName + " has been cached!");
+            	multiblockHash.put(fileName, invenToCache);
+            }
+            
+            if(matchData(world, state, pos, length, width, height, wildcardOptimization, multiblockHash.get(fileName))) {
+            	
+            	long timerStop = System.currentTimeMillis();
+            	long timeElapsed = timerStop - timerStart;
+            	System.out.println("Execution time (ms): " + timeElapsed);
+            	
+            	final List<Tuple<UUID, Integer>> progress = getBulkProgress(pInfo.ALL_UUIDS);
 	            
 	            progress.forEach((value) -> {
 	                if(isComplete(value.getFirst())) return;
@@ -236,6 +319,11 @@ public class TaskMultiblock implements ITask
 	            });
 	            
 	    		pInfo.markDirtyParty(Collections.singletonList(quest.getID()));
+            }
+            else {
+            	long timerStop = System.currentTimeMillis();
+            	long timeElapsed = timerStop - timerStart;
+            	System.out.println("Execution time: " + timeElapsed);
             }
         }
     }
@@ -249,6 +337,7 @@ public class TaskMultiblock implements ITask
         nbt.setInteger("length", length);
         nbt.setInteger("width", width);
         nbt.setInteger("height", height);
+        nbt.setBoolean("wildcardOptimization", wildcardOptimization);
         return nbt;
     }
     
@@ -261,6 +350,7 @@ public class TaskMultiblock implements ITask
         length = nbt.getInteger("length");
         width = nbt.getInteger("width");
         height = nbt.getInteger("height");
+        wildcardOptimization = nbt.getBoolean("wildcardOptimization");
     }
     
     @Override
