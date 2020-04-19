@@ -129,17 +129,21 @@ public class TaskMultiblock implements ITask
 					heightCount++;
 					lengthCount = 0;
 				}
+				else if(line.trim().contentEquals("")) {}
 				else {
 					String[] blocks = line.split(",");
 					for(int i=0; i<blocks.length; i++ ) {
-						fileArray[lengthCount][i][heightCount] = blocks[i].trim();
-						//System.out.println(blocks[i]);
-						if(blocks[i].trim().contentEquals(keyBlock)) {
-							//System.out.println("Key found, " + lengthCount + "," + i + "," + heightCount);
-							fileArray[lengthCount][i][heightCount] = "wildcard";
-							keyCoords[0] = lengthCount;
-							keyCoords[1] = i;
-							keyCoords[2] = heightCount;
+						if(blocks[i].trim().contentEquals("")) {}
+						else {
+							fileArray[lengthCount][i][heightCount] = blocks[i].trim();
+							//System.out.println(blocks[i]);
+							if(blocks[i].trim().contentEquals(keyBlock)) {
+								//System.out.println("Key found, " + lengthCount + "," + i + "," + heightCount);
+								fileArray[lengthCount][i][heightCount] = "wildcard";
+								keyCoords[0] = lengthCount;
+								keyCoords[1] = i;
+								keyCoords[2] = heightCount;
+							}
 						}
 					}
 					lengthCount++;
@@ -223,7 +227,7 @@ public class TaskMultiblock implements ITask
 					}
 				} //System.out.println("Finish width");
 			} //System.out.println("Finish height");
-			System.out.println("Returning true wilcard optimized");
+			//System.out.println("Returning true wildcard optimized");
 			return true;
 		}
 		else {
@@ -276,9 +280,9 @@ public class TaskMultiblock implements ITask
 					}
 				} //System.out.println("Finish width");
 			} //System.out.println("Finish height");
-			System.out.println("Returning true wildcard un-optimized");
+			//System.out.println("Returning true wildcard un-optimized");
 			return true;
-		}		
+		}
 	}
     
     public void onInteract(ParticipantInfo pInfo, DBEntry<IQuest> quest, EnumHand hand, ItemStack item, IBlockState state, BlockPos pos)
@@ -291,7 +295,8 @@ public class TaskMultiblock implements ITask
             if(state.getBlock() == Blocks.AIR) return;
             if(!(hand == EnumHand.MAIN_HAND)) return;
             
-            long timerStart = System.currentTimeMillis();
+            //long overallTimerStart = System.currentTimeMillis();
+            //long cacheTimerStart = System.currentTimeMillis();
             
             if(multiblockHash.get(fileName) == null) {
             	MultiblockInventory invenToCache = fileData(fileName, length, width, height);
@@ -303,11 +308,15 @@ public class TaskMultiblock implements ITask
             	multiblockHash.put(fileName, invenToCache);
             }
             
+            //long cacheTimerStop = System.currentTimeMillis();
+            //long cacheTimeElapsed = cacheTimerStop - cacheTimerStart;
+            //System.out.println("Cache time elapsed (ms): " + cacheTimeElapsed);
+            
             if(matchData(world, state, pos, length, width, height, wildcardOptimization, multiblockHash.get(fileName))) {
             	
-            	long timerStop = System.currentTimeMillis();
-            	long timeElapsed = timerStop - timerStart;
-            	System.out.println("Execution time (ms): " + timeElapsed);
+            	//long overallTimerStop = System.currentTimeMillis();
+            	//long overallTimeElapsed = overallTimerStop - overallTimerStart;
+            	//System.out.println("Overall time elapsed (ms): " + overallTimeElapsed);
             	
             	final List<Tuple<UUID, Integer>> progress = getBulkProgress(pInfo.ALL_UUIDS);
 	            
@@ -320,11 +329,11 @@ public class TaskMultiblock implements ITask
 	            
 	    		pInfo.markDirtyParty(Collections.singletonList(quest.getID()));
             }
-            else {
-            	long timerStop = System.currentTimeMillis();
-            	long timeElapsed = timerStop - timerStart;
-            	System.out.println("Execution time: " + timeElapsed);
-            }
+            //else {
+            //	long overallTimerStop = System.currentTimeMillis();
+            //	long overallTimeElapsed = overallTimerStop - overallTimerStart;
+            //	System.out.println("Overall time elapsed (ms): " + overallTimeElapsed);
+            //}
         }
     }
     
