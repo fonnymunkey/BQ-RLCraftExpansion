@@ -5,6 +5,7 @@ import betterquesting.api2.client.gui.misc.IGuiRect;
 import betterquesting.api2.client.gui.panels.IGuiPanel;
 import betterquesting.api2.storage.DBEntry;
 import betterquesting.api2.utils.ParticipantInfo;
+import bq_msi.client.gui.PanelTaskRCLocate;
 import bq_msi.core.*;
 import bq_msi.tasks.factory.FactoryTaskRCLocate;
 import net.minecraft.client.gui.GuiScreen;
@@ -30,7 +31,9 @@ public class TaskRCLocate implements ITaskTickable
 	private final Set<UUID> completeUsers = new TreeSet<>();
 	
 	public String structure = "";
+	public String name = "New Structure";
 	public int dim = 0;
+	public boolean hideInfo = false;
 	
 	@Override
 	public ResourceLocation getFactoryID()
@@ -155,6 +158,8 @@ public class TaskRCLocate implements ITaskTickable
 	{
 		nbt.setInteger("dimension", dim);
 		nbt.setString("structure", structure);
+		nbt.setString("name", name);
+		nbt.setBoolean("hideInfo", hideInfo);
 		return nbt;
 	}
 	
@@ -163,6 +168,8 @@ public class TaskRCLocate implements ITaskTickable
 	{
 		dim = nbt.getInteger("dimension");
 		structure = nbt.getString("structure");
+		name = nbt.getString("name");
+		hideInfo = nbt.getBoolean("hideInfo");
 	}
 	
 	@Override
@@ -199,7 +206,7 @@ public class TaskRCLocate implements ITaskTickable
 	@SideOnly(Side.CLIENT)
 	public IGuiPanel getTaskGui(IGuiRect rect, DBEntry<IQuest> quest)
 	{
-	    return null;
+	    return new PanelTaskRCLocate(rect, this);
 	}
  
 	@Override

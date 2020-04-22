@@ -9,7 +9,6 @@ import bq_msi.handlers.*;
 import bq_msi.tasks.factory.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.Loader;
 
 public class CommonProxy

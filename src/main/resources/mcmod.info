@@ -1,6 +1,6 @@
 [
 {
-  "modid": "bq_rlc",
+  "modid": "bq_msi",
   "name": "RLCraft Expansion",
   "description": "BetterQuesting task compatibility mod for RLCraft",
   "version": "${version}",

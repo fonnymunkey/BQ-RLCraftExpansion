@@ -10,6 +10,7 @@ import betterquesting.api2.storage.DBEntry;
 import betterquesting.api2.utils.ParticipantInfo;
 import bq_msi.MultiblockInventory;
 import bq_msi.NbtBlockType;
+import bq_msi.client.gui.PanelTaskMultiblock;
 import bq_msi.core.*;
 import bq_msi.tasks.factory.FactoryTaskMultiblock;
 import net.minecraft.block.state.IBlockState;
@@ -21,20 +22,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,6 +52,22 @@ public class TaskMultiblock implements ITask
 	public int width = 0;
 	public int height = 0;
 	public boolean wildcardOptimization = false;
+	public String name = "New Multiblock Name";
+	
+	public static String clearHashmap() {
+		if(multiblockHash.size() == 0) return "No cached files.";
+		String returnable = "Cleared cached files:";
+		for (String key : multiblockHash.keySet()) returnable = returnable + " " + key;
+		multiblockHash.clear();
+		return returnable;
+	}
+	
+	public static String getHashmapContents() {
+		if(multiblockHash.size() == 0) return "No cached files.";
+		String returnable = "Cached files:";
+		for (String key : multiblockHash.keySet()) returnable = returnable + " " + key;
+		return returnable;
+	}
 	
     @Override
     public ResourceLocation getFactoryID()
@@ -173,7 +184,7 @@ public class TaskMultiblock implements ITask
 		boolean rot1 = true;
 		boolean rot2 = true;
 		boolean rot3 = true;
-		
+			
 		if(wildcardOptimization) {
 			for(int h=0; h<height; h++) {
 				for(int w=0; w<width; w++) {
@@ -347,6 +358,7 @@ public class TaskMultiblock implements ITask
         nbt.setInteger("width", width);
         nbt.setInteger("height", height);
         nbt.setBoolean("wildcardOptimization", wildcardOptimization);
+        nbt.setString("name", name);
         return nbt;
     }
     
@@ -360,6 +372,7 @@ public class TaskMultiblock implements ITask
         width = nbt.getInteger("width");
         height = nbt.getInteger("height");
         wildcardOptimization = nbt.getBoolean("wildcardOptimization");
+        name = nbt.getString("name");
     }
     
     @Override
@@ -453,7 +466,7 @@ public class TaskMultiblock implements ITask
 	@SideOnly(Side.CLIENT)
     public IGuiPanel getTaskGui(IGuiRect rect, DBEntry<IQuest> quest)
     {
-        return null;
+        return new PanelTaskMultiblock(rect, this);
     }
     
     @Override

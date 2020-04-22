@@ -2,6 +2,7 @@ package bq_msi.core;
 
 import org.apache.logging.log4j.Logger;
 
+import bq_msi.commands.*;
 import bq_msi.core.proxies.CommonProxy;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -17,7 +18,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 public class BQMSI
 {
     public static final String MODID = "bq_msi";
-    public static final String VERSION = "1.0.3";
+    public static final String VERSION = "1.0.4";
     public static final String NAME = "BQ_Multiblock_Structure_Integration";
     public static final String PROXY = "bq_msi.core.proxies";
     public static final String CHANNEL = "BQMSI";
@@ -58,5 +59,16 @@ public class BQMSI
         {
             proxy.registerExpansion();
         }
+    }
+    
+    @EventHandler
+    public void serverLoad(FMLServerStartingEvent event)
+    {
+    	if(Loader.isModLoaded("reccomplex"))
+    	{
+    		event.registerServerCommand(new GetStructureNameCommand());
+    	}
+    	event.registerServerCommand(new GetMultiblockCacheCommand());
+    	event.registerServerCommand(new ClearMultiblockCacheCommand());
     }
 }
