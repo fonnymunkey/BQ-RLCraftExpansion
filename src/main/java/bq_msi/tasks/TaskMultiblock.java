@@ -198,8 +198,11 @@ public class TaskMultiblock implements ITask
 									int z = (keyWidth + (-w) + pos.getZ());
 									//System.out.println("fileArray: " + fileArray[l][w][h]);
 									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+									String targetBlock = targetState.getBlock().getRegistryName().toString();
 									String fileBlock = fileArray[l][w][h];
+									if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+									else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot0=false;
 								}
 								if(rot==1 && rot1) {
@@ -208,8 +211,11 @@ public class TaskMultiblock implements ITask
 									int z = (-keyWidth + w + pos.getZ());
 									//System.out.println("fileArray: " + fileArray[l][w][h]);
 									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+									String targetBlock = targetState.getBlock().getRegistryName().toString();
 									String fileBlock = fileArray[l][w][h];
+									if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+									else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot1=false;
 								}
 								if(rot==2 && rot2) {
@@ -218,8 +224,11 @@ public class TaskMultiblock implements ITask
 									int z = (-keyLength + l + pos.getZ());
 									//System.out.println("fileArray: " + fileArray[l][w][h]);
 									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+									String targetBlock = targetState.getBlock().getRegistryName().toString();
 									String fileBlock = fileArray[l][w][h];
+									if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+									else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot2=false;
 								}
 								if(rot==3 && rot3) {
@@ -228,8 +237,11 @@ public class TaskMultiblock implements ITask
 									int z = (keyLength + (-l) + pos.getZ());
 									//System.out.println("fileArray: " + fileArray[l][w][h]);
 									//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-									String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+									IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+									String targetBlock = targetState.getBlock().getRegistryName().toString();
 									String fileBlock = fileArray[l][w][h];
+									if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+									else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 									if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot3=false;
 								}
 								if(!(rot0) && !(rot1) && !(rot2) && !(rot3)) return false;
@@ -252,8 +264,11 @@ public class TaskMultiblock implements ITask
 								int z = (keyWidth + (-w) + pos.getZ());
 								//System.out.println("fileArray: " + fileArray[l][w][h]);
 								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+								String targetBlock = targetState.getBlock().getRegistryName().toString();
 								String fileBlock = fileArray[l][w][h];
+								if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+								else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot0=false;
 							}
 							if(rot==1 && rot1) {
@@ -262,8 +277,11 @@ public class TaskMultiblock implements ITask
 								int z = (-keyWidth + w + pos.getZ());
 								//System.out.println("fileArray: " + fileArray[l][w][h]);
 								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+								String targetBlock = targetState.getBlock().getRegistryName().toString();
 								String fileBlock = fileArray[l][w][h];
+								if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+								else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot1=false;
 							}
 							if(rot==2 && rot2) {
@@ -272,8 +290,11 @@ public class TaskMultiblock implements ITask
 								int z = (-keyLength + l + pos.getZ());
 								//System.out.println("fileArray: " + fileArray[l][w][h]);
 								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+								String targetBlock = targetState.getBlock().getRegistryName().toString();
 								String fileBlock = fileArray[l][w][h];
+								if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+								else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot2=false;
 							}
 							if(rot==3 && rot3) {
@@ -282,8 +303,11 @@ public class TaskMultiblock implements ITask
 								int z = (keyLength + (-l) + pos.getZ());
 								//System.out.println("fileArray: " + fileArray[l][w][h]);
 								//System.out.println("block: " + world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString());
-								String targetBlock = world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().toString();
+								IBlockState targetState = world.getBlockState(new BlockPos(x, y, z));
+								String targetBlock = targetState.getBlock().getRegistryName().toString();
 								String fileBlock = fileArray[l][w][h];
+								if(fileBlock.substring(fileBlock.length()-1).equalsIgnoreCase("*")) targetBlock = targetBlock + ":*";
+								else targetBlock = targetBlock + ":" + targetState.getBlock().getMetaFromState(targetState);
 								if(!(fileBlock.contentEquals(targetBlock) || fileBlock.contentEquals("wildcard"))) rot3=false;
 							}
 							if(!(rot0) && !(rot1) && !(rot2) && !(rot3)) return false;
