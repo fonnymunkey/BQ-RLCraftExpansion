@@ -13,6 +13,7 @@ import bq_msi.NbtBlockType;
 import bq_msi.client.gui.PanelTaskMultiblock;
 import bq_msi.core.*;
 import bq_msi.tasks.factory.FactoryTaskMultiblock;
+import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -33,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.util.*;
 import java.io.*;
 import java.lang.Math;
@@ -47,12 +49,16 @@ public class TaskMultiblock implements ITask
 	public BigItemStack targetItem = new BigItemStack(Items.AIR);
 	public final NbtBlockType targetBlock = new NbtBlockType(Blocks.AIR);
 	public boolean render = false;
-	public String fileName = "";
+	public String fileNames = "";
 	public int length = 0;
 	public int width = 0;
 	public int height = 0;
 	public boolean wildcardOptimization = false;
 	public String name = "New Multiblock Name";
+	public boolean gameStageCompat = false;
+	public String gameStageName = "";
+	public boolean useImage = false;
+	public String imageLocation = "";
 	
 	public static String clearHashmap() {
 		if(multiblockHash.size() == 0) return "No cached files.";
@@ -184,7 +190,7 @@ public class TaskMultiblock implements ITask
 		boolean rot1 = true;
 		boolean rot2 = true;
 		boolean rot3 = true;
-			
+		
 		if(wildcardOptimization) {
 			for(int h=0; h<height; h++) {
 				for(int w=0; w<width; w++) {
@@ -333,36 +339,44 @@ public class TaskMultiblock implements ITask
             //long overallTimerStart = System.currentTimeMillis();
             //long cacheTimerStart = System.currentTimeMillis();
             
-            if(multiblockHash.get(fileName) == null) {
-            	MultiblockInventory invenToCache = fileData(fileName, length, width, height);
-            	if(invenToCache == null) {
-            		System.out.println("Multiblock task attempted to cache broken file " + fileName);
+            String[] nameList = fileNames.split(",");
+            
+    		if(gameStageCompat && Loader.isModLoaded("gamestages")) {
+        		if(!GameStageHelper.hasStage(pInfo.PLAYER, gameStageName)) return;
+    		}
+            
+            for(String name : nameList) {
+            	if(multiblockHash.get(name.trim()) == null) {
+            		MultiblockInventory invenToCache = fileData(name.trim(), length, width, height);
+            		if(invenToCache == null) {
+            			System.out.println("Multiblock task attempted to cache broken file " + name);
+            			return;
+            		}
+            		System.out.println("Multiblock " + name + " has been cached!");
+            		multiblockHash.put(name, invenToCache);
+            	}
+            	//long cacheTimerStop = System.currentTimeMillis();
+            	//long cacheTimeElapsed = cacheTimerStop - cacheTimerStart;
+            	//System.out.println("Cache time elapsed (ms): " + cacheTimeElapsed);
+            
+            	if(matchData(world, state, pos, length, width, height, wildcardOptimization, multiblockHash.get(name))) {
+            	
+            		//long overallTimerStop = System.currentTimeMillis();
+            		//long overallTimeElapsed = overallTimerStop - overallTimerStart;
+            		//System.out.println("Overall time elapsed (ms): " + overallTimeElapsed);
+            	
+            		final List<Tuple<UUID, Integer>> progress = getBulkProgress(pInfo.ALL_UUIDS);
+	            
+            		progress.forEach((value) -> {
+            			if(isComplete(value.getFirst())) return;
+            			int np = Math.min(1, value.getSecond() + 1);
+            			setUserProgress(value.getFirst(), np);
+            			if(np >= 1) setComplete(value.getFirst());
+            		});
+	            
+            		pInfo.markDirtyParty(Collections.singletonList(quest.getID()));
             		return;
             	}
-            	System.out.println("Multiblock " + fileName + " has been cached!");
-            	multiblockHash.put(fileName, invenToCache);
-            }
-            
-            //long cacheTimerStop = System.currentTimeMillis();
-            //long cacheTimeElapsed = cacheTimerStop - cacheTimerStart;
-            //System.out.println("Cache time elapsed (ms): " + cacheTimeElapsed);
-            
-            if(matchData(world, state, pos, length, width, height, wildcardOptimization, multiblockHash.get(fileName))) {
-            	
-            	//long overallTimerStop = System.currentTimeMillis();
-            	//long overallTimeElapsed = overallTimerStop - overallTimerStart;
-            	//System.out.println("Overall time elapsed (ms): " + overallTimeElapsed);
-            	
-            	final List<Tuple<UUID, Integer>> progress = getBulkProgress(pInfo.ALL_UUIDS);
-	            
-	            progress.forEach((value) -> {
-	                if(isComplete(value.getFirst())) return;
-	                int np = Math.min(1, value.getSecond() + 1);
-	                setUserProgress(value.getFirst(), np);
-	                if(np >= 1) setComplete(value.getFirst());
-	            });
-	            
-	    		pInfo.markDirtyParty(Collections.singletonList(quest.getID()));
             }
             //else {
             //	long overallTimerStop = System.currentTimeMillis();
@@ -377,12 +391,16 @@ public class TaskMultiblock implements ITask
     {
         nbt.setTag("item", targetItem.writeToNBT(new NBTTagCompound()));
         nbt.setTag("block", targetBlock.writeToNBT(new NBTTagCompound()));
-        nbt.setString("fileName", fileName);
+        nbt.setString("fileNames", fileNames);
         nbt.setInteger("length", length);
         nbt.setInteger("width", width);
         nbt.setInteger("height", height);
         nbt.setBoolean("wildcardOptimization", wildcardOptimization);
         nbt.setString("name", name);
+        nbt.setBoolean("gameStageCompat", gameStageCompat);
+        nbt.setString("gameStageName", gameStageName);
+        nbt.setBoolean("useImage", useImage);
+        nbt.setString("imageLocation", imageLocation);
         return nbt;
     }
     
@@ -391,12 +409,16 @@ public class TaskMultiblock implements ITask
     {
         targetItem = new BigItemStack(nbt.getCompoundTag("item"));
         targetBlock.readFromNBT(nbt.getCompoundTag("block"));
-        fileName = nbt.getString("fileName");
+        fileNames = nbt.getString("fileNames");
         length = nbt.getInteger("length");
         width = nbt.getInteger("width");
         height = nbt.getInteger("height");
         wildcardOptimization = nbt.getBoolean("wildcardOptimization");
         name = nbt.getString("name");
+        gameStageCompat = nbt.getBoolean("gameStageCompat");
+        gameStageName = nbt.getString("gameStageName");
+        useImage = nbt.getBoolean("useImage");
+        imageLocation = nbt.getString("imageLocation");
     }
     
     @Override

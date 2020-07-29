@@ -14,11 +14,11 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-@Mod(modid = BQMSI.MODID, version = BQMSI.VERSION, name = BQMSI.NAME, dependencies = "after:betterquesting;after:reccomplex")
+@Mod(modid = BQMSI.MODID, version = BQMSI.VERSION, name = BQMSI.NAME, dependencies = "after:betterquesting;after:reccomplex;after:gamestages")
 public class BQMSI
 {
     public static final String MODID = "bq_msi";
-    public static final String VERSION = "1.0.5";
+    public static final String VERSION = "1.0.6";
     public static final String NAME = "BQ_Multiblock_Structure_Integration";
     public static final String PROXY = "bq_msi.core.proxies";
     public static final String CHANNEL = "BQMSI";
