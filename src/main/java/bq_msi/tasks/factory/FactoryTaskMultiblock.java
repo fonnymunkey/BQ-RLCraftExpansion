@@ -7,6 +7,7 @@ import bq_msi.tasks.TaskMultiblock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
+@SuppressWarnings("deprecation")
 public class FactoryTaskMultiblock implements IFactoryData<ITask, NBTTagCompound>
 {
 	public static final FactoryTaskMultiblock INSTANCE = new FactoryTaskMultiblock();

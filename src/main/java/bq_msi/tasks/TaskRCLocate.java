@@ -112,7 +112,7 @@ public class TaskRCLocate implements ITaskTickable
 		}
 		catch(IOException ex) {
 			if(ex instanceof FileNotFoundException) {
-				System.out.println("BQ_RLC tried to access non-existant file" + ex);
+				//System.out.println("BQ_RLC tried to access non-existant file" + ex);
 				return false; }
 			else {
 				System.out.println(ex);

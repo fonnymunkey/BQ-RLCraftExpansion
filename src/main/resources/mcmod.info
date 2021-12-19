@@ -1,8 +1,8 @@
 [
 {
   "modid": "bq_msi",
-  "name": "RLCraft Expansion",
-  "description": "BetterQuesting task compatibility mod for RLCraft",
+  "name": "BQ Multiblock and Structure Expansion",
+  "description": "BetterQuesting task expansion for RecurrentComplex and Multiblocks",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

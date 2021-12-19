@@ -7,6 +7,7 @@ import bq_msi.tasks.TaskRCLocate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
+@SuppressWarnings("deprecation")
 public class FactoryTaskRCLocate implements IFactoryData<ITask, NBTTagCompound>
 {
 	public static final FactoryTaskRCLocate INSTANCE = new FactoryTaskRCLocate();

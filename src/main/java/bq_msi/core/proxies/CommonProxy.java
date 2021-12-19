@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 
+@SuppressWarnings("deprecation")
 public class CommonProxy
 {
 	public boolean isClient()

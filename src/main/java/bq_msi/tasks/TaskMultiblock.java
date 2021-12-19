@@ -13,7 +13,6 @@ import bq_msi.NbtBlockType;
 import bq_msi.client.gui.PanelTaskMultiblock;
 import bq_msi.core.*;
 import bq_msi.tasks.factory.FactoryTaskMultiblock;
-import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -342,7 +341,7 @@ public class TaskMultiblock implements ITask
             String[] nameList = fileNames.split(",");
             
     		if(gameStageCompat && Loader.isModLoaded("gamestages")) {
-        		if(!GameStageHelper.hasStage(pInfo.PLAYER, gameStageName)) return;
+        		if(!net.darkhax.gamestages.GameStageHelper.hasStage(pInfo.PLAYER, gameStageName)) return;
     		}
             
             for(String name : nameList) {

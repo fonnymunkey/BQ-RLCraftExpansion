@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.0.6"
+version = "1.0.7"
 group = "bq_msi" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "BQ_Multiblock_Structure_Integration"
 
@@ -54,7 +54,7 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-	compile files('lib/BetterQuesting-3.5.317.jar','lib/RecurrentComplex-1.4.8.2.jar')
+	compile files('lib/BetterQuesting-3.5.317.jar','lib/RecurrentComplex-1.4.8.2.jar','lib/GameStages-1.12.2-2.0.123.jar')
 }
 
 processResources {
