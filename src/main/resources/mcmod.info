@@ -1,16 +1,15 @@
 [
-{
-  "modid": "bq_msi",
-  "name": "BQ Multiblock and Structure Expansion",
-  "description": "BetterQuesting task expansion for RecurrentComplex and Multiblocks",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["Fonnymunkey"],
+  {
+    "modid": "${mod_id}",
+    "name": "${mod_name}",
+    "description": "${mod_description}",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://www.curseforge.com/members/fonnymunkey/projects",
+    "updateUrl": "",
+    "authorList": ${mod_author},
   "credits": "Funwayguy for BetterQuesting and the expansion this is based from",
   "logoFile": "title.jpg",
-  "screenshots": [],
   "dependencies": ["betterquesting"]
-}
+  }
 ]
